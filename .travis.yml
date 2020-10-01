@@ -1,0 +1,56 @@
+language: python
+
+matrix:
+  include:
+    - python: 3.6
+      env: TOX_ENV=py36-withclick-withtqdm
+    - python: 3.6
+      env: TOX_ENV=py36-withclick-notqdm
+    - python: 3.6
+      env: TOX_ENV=py36-noclick-withtqdm
+    - python: 3.6
+      env: TOX_ENV=py36-noclick-notqdm
+    - python: 3.7
+      env: TOX_ENV=py37-withclick-withtqdm
+    - python: pypy3
+      env: TOX_ENV=pypy3
+    - python: pypy3
+      env: TOX_ENV=pypy3-withclick-notqdm
+    - python: pypy3
+      env: TOX_ENV=pypy3-noclick-withtqdm
+    - python: pypy3
+      env: TOX_ENV=pypy3-noclick-notqdm
+    - python: 3.8
+      env: TOX_ENV=py38-withclick-withtqdm
+    - python: 3.6
+      env: TOX_ENV=flake8
+    - python: 3.6
+      env: TOX_ENV=mypy
+    - python: 3.6
+      env: TOX_ENV=black
+
+install:
+  - pip install -r requirements.txt
+  - pip install codecov
+
+script:
+  - tox -e $TOX_ENV
+
+after_success:
+  - codecov
+
+before_cache:
+  - rm -rf $HOME/.cache/pip/log
+
+cache:
+  directories:
+  - "$HOME/.cache/pip"
+
+deploy:
+  provider: pypi
+  skip_existing: true
+  user: tmuguet
+  on:
+    tags: true
+  password:
+    secure: UBSlOyKAX5aNlyUxlp/r1bnzP+U2ETzQZmKtbHB/lbhnPF5plctBvok8Jha+BpK+eVfqvt6+RsyG1eGH79YCUfMENIGTFk2xkb9galH6SkNRhnD1WoFNe0xQZacAywalkIl9MSE3R27qwCXQ04sAQNdzkX5l/mo79HtIejQsVT4ul99NEKD6QweRuPU/VpxKswWaaryy2MqTu9Qd42j0xXdi2BY5mfccRtYR5OBcd0Vgcfexpd3W4+76yvFoZfnow1PnjncxgCUsY61dYpSz9TDjNVqW8nv9xU9XUToZDCXg68q7LuvXtSnXDeO0HtWbp1TWXJSnuzLCmwF1EwKEgoR844e9IgGdafNqukZD9BpOoHKH8fceATKp3CwMOmgIyQMSRSJiMl0J3BLTw+Dbpyw5jnhAm7ieOHkA90GxJQhk9kZqdreo4htedjOITM+dgdy3A5e+G19lf+RnQ56PAqUCEOMLCG/BQsh/1jsbgv9SMsc5R4qOgXDB3ar+piS6jdhcvGT373sh+L0w7UAy44E6Ym1NNcCrUVkOXZKkODr14F/3r+t4yh/tapMCrf5fBWlqvxMdNJKWQF9Gy0oCDFLQsaAgyRzVB4OeRi/E/dzy2shdpa8j4QH6dfg5HplU2JI0Xm7XZ2N+3ANdAG0zXbwMg+wNNyjoyLAiEl8fiNs=
