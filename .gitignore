@@ -4,7 +4,7 @@ __pycache__/
 .mypy_cache/
 .pytest_cache/
 .tox/
+*.egg-info/
 coverage.xml
 htmlcov/
-venv/
-*.egg-info/
+.venv/

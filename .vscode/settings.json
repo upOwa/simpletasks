@@ -1,5 +1,5 @@
 {
-  "python.pythonPath": "venv/bin/python3",
+  "python.pythonPath": ".venv/bin/python3.6",
   "python.terminal.activateEnvironment": false,
   "editor.rulers": [110],
   "python.formatting.provider": "black",
@@ -13,6 +13,5 @@
   "editor.codeActionsOnSave": {
     "source.organizeImports": true
   },
-  "python.analysis.diagnosticMode": "workspace",
-  "restructuredtext.confPath": ""
+  "python.analysis.diagnosticMode": "workspace"
 }
