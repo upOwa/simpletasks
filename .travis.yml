@@ -72,7 +72,7 @@ jobs:
 
       deploy:
         provider: script
-        script: poetry publish
+        script: poetry publish --build
         on:
           branch: master
           tags: true
