@@ -29,27 +29,36 @@ jobs:
     - stage: test
       python: 3.6
       env: TOX_ENV=py36-noclick-notqdm
+
     - stage: test
       python: 3.7
       env: TOX_ENV=py37-withclick-withtqdm
+
     - stage: test
       python: pypy3
+      dist: focal
       env: TOX_ENV=pypy3-withclick-withtqdm
     - stage: test
       python: pypy3
+      dist: focal
       env: TOX_ENV=pypy3-withclick-notqdm
     - stage: test
       python: pypy3
+      dist: focal
       env: TOX_ENV=pypy3-noclick-withtqdm
     - stage: test
       python: pypy3
+      dist: focal
       env: TOX_ENV=pypy3-noclick-notqdm
+
     - stage: test
       python: 3.8
       env: TOX_ENV=py38-withclick-withtqdm
+
     - stage: lint
       python: 3.6
       env: TOX_ENV=lint
+
     - stage: deploy
       python: 3.6
       install: true
