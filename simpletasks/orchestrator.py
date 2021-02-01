@@ -11,16 +11,47 @@ Tasks = Dict[_TTask, Tuple[List[_TTask], _Args]]
 
 
 class Orchestrator(Task):
-    """Orchestrates multiple tasks"""
+    """Task to execute multiple tasks in parallel (experimental).
+
+    Definition:
+    ```
+    class MySubTask1(Task):
+        ...
+    class MySubTask2(Task):
+        ...
+
+    class MyTask(Orchestrator):
+        tasks = {
+            MySubTask1: ([], {}),
+            MySubTask2: ([MySubTask1], {}),
+        }
+        num_threads = 3
+    ```
+    """
 
     @property
     @abc.abstractmethod
     def tasks(self) -> Tasks:
+        """Map of tasks to execute.
+
+        Keys are the types of the tasks to execute.
+        Values are a tuple of 2 items:
+        - List of predecessors
+        - Map of options for the task (if any)
+
+        Returns:
+        - Tasks: Map of tasks.
+        """
         pass  # pragma: no cover
 
     @property
     @abc.abstractmethod
     def num_threads(self) -> int:
+        """Defines the maximum number of concurrent threads to use
+
+        Returns:
+        - int: Maximum number of concurrent threads to use
+        """
         pass  # pragma: no cover
 
     def __init__(self, **kwargs) -> None:
