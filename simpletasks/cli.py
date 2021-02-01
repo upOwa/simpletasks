@@ -11,7 +11,7 @@ _click_parameter = Callable[[_F], _F]
 
 class CliParams:
     @staticmethod
-    def validate_date(ctx, param, value: str) -> Optional[datetime.date]:
+    def _validate_date(ctx, param, value: str) -> Optional[datetime.date]:
         if not value:
             return None
 
@@ -32,7 +32,15 @@ class CliParams:
 
     @staticmethod
     def date() -> _click_parameter:
-        return click.option("--date", default=None, help="Date YYYY-MM-DD", callback=CliParams.validate_date)
+        """Adds a timestamp option - requires a valid date to be passed.
+
+        In `Task` objects, the parameter value can directly be retrieved via `self.date`.
+        If no option is provided when called, will be today.
+
+        Returns:
+        - _click_parameter: parameter
+        """
+        return click.option("--date", default=None, help="Date YYYY-MM-DD", callback=CliParams._validate_date)
 
     @staticmethod
     def timestamp_deprecated() -> _click_parameter:
@@ -64,9 +72,9 @@ class CliParams:
     def fail_on_exception() -> _click_parameter:
         return click.option(
             "--fail-on-exception/--no-fail-on-exception",
-            "-F/ ",
+            "-F/-C ",
             is_flag=True,
-            default=False,
+            default=True,
             help="Fail and exit task on exception",
         )
 
@@ -96,7 +104,7 @@ class Cli(object):
         else:
             self._task_options = [
                 CliParams.progress(),
-                CliParams.timestamp_deprecated(),
+                CliParams.date(),
                 CliParams.dryrun(),
                 CliParams.quick(),
             ]

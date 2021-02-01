@@ -32,6 +32,7 @@ class Task(metaclass=abc.ABCMeta):
             self.showprogress = self.options.get("showprogress", True)
         self.dryrun = self.options.get("dryrun", False)
         self.quick = self.options.get("quick", False)
+        self.includearchives = self.options.get("includearchives", False)
         self.force = self.options.get("force", False)
         self.verbose = self.options.get("verbose", False)
 

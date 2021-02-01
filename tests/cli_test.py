@@ -62,6 +62,7 @@ def test_options(configure) -> None:
             CliParams.force(),
             CliParams.verbose(),
             CliParams.fail_on_exception(),
+            CliParams.timestamp_deprecated(),
         ],
     )
     class OptionsTask(Task):
