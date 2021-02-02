@@ -1,9 +1,13 @@
 try:
-    from .cli import Cli, CliParams  # noqa: F401
+    from .cli import Cli, CliParams
 except ImportError:
-    pass
+    # See https://github.com/python/mypy/issues/1297 for why we use type:ignore
+    Cli = None  # type:ignore
+    CliParams = None  # type:ignore
 
-from .helpers import addTestLogger  # noqa: F401
-from .orchestrator import Orchestrator, Tasks  # noqa: F401
-from .pipeline import Pipeline  # noqa: F401
-from .task import Task  # noqa: F401
+from .helpers import addTestLogger
+from .orchestrator import Orchestrator, Tasks
+from .pipeline import Pipeline
+from .task import Task
+
+__all__ = ["Cli", "CliParams", "addTestLogger", "Orchestrator", "Tasks", "Pipeline", "Task"]

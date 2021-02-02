@@ -5,6 +5,20 @@ from .task import Task
 
 
 class Pipeline(Task):
+    """Task to execute multiple tasks one after each other.
+
+    Definition:
+    ```
+    class MySubTask1(Task):
+        ...
+    class MySubTask2(Task):
+        ...
+
+    class MyTask(Pipeline):
+        tasks = [MySubTask1, MySubTask2]
+    ```
+    """
+
     @property
     @abc.abstractmethod
     def tasks(self) -> List[Type[Task]]:
