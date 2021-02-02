@@ -61,8 +61,6 @@ class Orchestrator(Task):
 
         self._queue = {key: copy.deepcopy(value) for key, value in self.tasks.items()}
         self._args = copy.deepcopy(kwargs)
-        if Task.TESTING:
-            self._events: List[Tuple[str, str, str]] = []
         self.fail_on_exception = self.options.get("fail_on_exception", True)
 
         self.exceptions: List[Tuple[_TTask, Exception]] = []
@@ -88,8 +86,6 @@ class Orchestrator(Task):
             args.update(self._queue[task][1])
             del self._queue[task]
 
-            if Task.TESTING:
-                self._events.append(("added", task.__name__, ""))
             self.logger.info("Adding task {} into queue".format(task.__name__))
             self.q.put((task, args))
 
@@ -99,9 +95,6 @@ class Orchestrator(Task):
             if item is None:
                 break
 
-            if Task.TESTING:
-                self._events.append(("started", item[0].__name__, str(item[1])))
-
             self.logger.info("Starting task {}".format(item[0].__name__))
             if self.logger.isEnabledFor(logging.DEBUG):
                 self.logger.debug("Starting task {} using arguments: {}".format(item[0].__name__, item[1]))
@@ -109,13 +102,9 @@ class Orchestrator(Task):
             try:
                 t = item[0](**(item[1]))
                 res = t.run()
-                if Task.TESTING:
-                    self._events.append(("completed", item[0].__name__, str(res)))
                 self.logger.info("Completed task {}: {}".format(item[0].__name__, res))
             except Exception as e:
                 self.logger.info("Failed task {}: {}".format(item[0].__name__, e))
-                if Task.TESTING:
-                    self._events.append(("failed", item[0].__name__, str(e)))
                 self.exceptions.append((item[0], e))
 
             with self.lock:
@@ -149,9 +138,6 @@ class Orchestrator(Task):
             self.logger.critical(
                 "Done but some tasks remaining: {}".format(";".join([x.__name__ for x in self._queue.keys()]))
             )
-
-        if Task.TESTING:
-            self._events.append(("done", "", ""))
 
         if self.exceptions:
             for task, exception in self.exceptions:

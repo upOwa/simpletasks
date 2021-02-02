@@ -101,43 +101,28 @@ def test_orchestrator(configure) -> None:
         o.run()
     assert str(e.value) == "Task failed"
 
-    assert o._events == [
-        ("added", "NominalTask", ""),
-        ("added", "NominalTask2", ""),
-        (
-            "started",
-            "NominalTask",
-            "{'show_progress': False, 'dryrun': True, 'verbose': True, 'loggernamespace': 'simpletasks.Orch.NominalTask'}",
-        ),
-        (
-            "started",
-            "NominalTask2",
-            "{'show_progress': True, 'dryrun': True, 'verbose': True, 'loggernamespace': 'simpletasks.Orch.NominalTask2'}",
-        ),
-        ("completed", "NominalTask2", "True"),
-        ("added", "FailureTask", ""),
-        (
-            "started",
-            "FailureTask",
-            "{'show_progress': False, 'dryrun': True, 'verbose': True, 'loggernamespace': 'simpletasks.Orch.FailureTask'}",
-        ),
-        ("failed", "FailureTask", "error"),
-        ("completed", "NominalTask", "True"),
-        ("done", "", ""),
-    ]
-
     output = task_logger.getvalue()
     assert "simpletasks.Orch - INFO - Starting task NominalTask" in output
     assert (
         "simpletasks.Orch - DEBUG - Starting task NominalTask using arguments: {'show_progress': False, 'dryrun': True, 'verbose': True, 'loggernamespace': 'simpletasks.Orch.NominalTask'}"
         in output
     )
+    assert (
+        "simpletasks.Orch.NominalTask - INFO - Hello, from NominalTask, called with options={'show_progress': False, 'dryrun': True, 'verbose': True, 'loggernamespace': 'simpletasks.Orch.NominalTask'}"
+        in output
+    )
+    assert "simpletasks.Orch - INFO - Completed task NominalTask: True" in output
 
     assert "simpletasks.Orch - INFO - Starting task NominalTask2" in output
     assert (
         "simpletasks.Orch - DEBUG - Starting task NominalTask2 using arguments: {'show_progress': True, 'dryrun': True, 'verbose': True, 'loggernamespace': 'simpletasks.Orch.NominalTask2'}"
         in output
     )
+    assert (
+        "simpletasks.Orch.NominalTask2 - INFO - Hello, from NominalTask2, called with options={'show_progress': True, 'dryrun': True, 'verbose': True, 'loggernamespace': 'simpletasks.Orch.NominalTask2'}"
+        in output
+    )
+    assert "simpletasks.Orch - INFO - Completed task NominalTask2: True" in output
 
     assert "simpletasks.Orch - INFO - Starting task FailureTask" in output
     assert (
@@ -146,21 +131,10 @@ def test_orchestrator(configure) -> None:
     )
 
     assert "simpletasks.Orch - INFO - Starting task NominalTask3" not in output
-    assert "simpletasks.Orch - INFO - Starting task NominalTask4" not in output
-
-    assert (
-        "simpletasks.Orch.NominalTask - INFO - Hello, from NominalTask, called with options={'show_progress': False, 'dryrun': True, 'verbose': True, 'loggernamespace': 'simpletasks.Orch.NominalTask'}"
-        in output
-    )
-    assert (
-        "simpletasks.Orch.NominalTask2 - INFO - Hello, from NominalTask2, called with options={'show_progress': True, 'dryrun': True, 'verbose': True, 'loggernamespace': 'simpletasks.Orch.NominalTask2'}"
-        in output
-    )
-    assert "simpletasks.Orch.NominalTask4 - INFO - Hello, from NominalTask4!" not in output
-
-    assert "simpletasks.Orch - INFO - Completed task NominalTask2: True" in output
-    assert "simpletasks.Orch - INFO - Completed task NominalTask: True" in output
     assert "simpletasks.Orch - INFO - Completed task NominalTask3: True" not in output
+
+    assert "simpletasks.Orch - INFO - Starting task NominalTask4" not in output
+    assert "simpletasks.Orch.NominalTask4 - INFO - Hello, from NominalTask4!" not in output
     assert "simpletasks.Orch - INFO - Completed task NominalTask4: True" not in output
 
     assert (
@@ -189,85 +163,53 @@ def test_orchestrator_error_catched(configure) -> None:
         o.run()
     assert str(e.value) == "Task failed"
 
-    assert o._events == [
-        ("added", "NominalTask", ""),
-        ("added", "NominalTask2", ""),
-        (
-            "started",
-            "NominalTask",
-            "{'show_progress': False, 'dryrun': True, 'verbose': True, 'fail_on_exception': False, 'loggernamespace': 'simpletasks.Orch.NominalTask'}",
-        ),
-        (
-            "started",
-            "NominalTask2",
-            "{'show_progress': True, 'dryrun': True, 'verbose': True, 'fail_on_exception': False, 'loggernamespace': 'simpletasks.Orch.NominalTask2'}",
-        ),
-        ("completed", "NominalTask2", "True"),
-        ("added", "FailureTask", ""),
-        (
-            "started",
-            "FailureTask",
-            "{'show_progress': False, 'dryrun': True, 'verbose': True, 'fail_on_exception': False, 'loggernamespace': 'simpletasks.Orch.FailureTask'}",
-        ),
-        ("failed", "FailureTask", "error"),
-        ("completed", "NominalTask", "True"),
-        ("added", "NominalTask3", ""),
-        (
-            "started",
-            "NominalTask3",
-            "{'show_progress': False, 'dryrun': True, 'verbose': True, 'fail_on_exception': False, 'loggernamespace': 'simpletasks.Foo'}",
-        ),
-        ("completed", "NominalTask3", "True"),
-        ("added", "NominalTask4", ""),
-        (
-            "started",
-            "NominalTask4",
-            "{'show_progress': False, 'dryrun': True, 'verbose': True, 'fail_on_exception': False, 'loggernamespace': 'simpletasks.Orch.NominalTask4'}",
-        ),
-        ("completed", "NominalTask4", "True"),
-        ("done", "", ""),
-    ]
-
     output = task_logger.getvalue()
     assert "simpletasks.Orch - INFO - Starting task NominalTask" in output
     assert (
         "simpletasks.Orch - DEBUG - Starting task NominalTask using arguments: {'show_progress': False, 'dryrun': True, 'verbose': True, 'fail_on_exception': False, 'loggernamespace': 'simpletasks.Orch.NominalTask'}"
         in output
     )
+    assert (
+        "simpletasks.Orch.NominalTask - INFO - Hello, from NominalTask, called with options={'show_progress': False, 'dryrun': True, 'verbose': True, 'fail_on_exception': False, 'loggernamespace': 'simpletasks.Orch.NominalTask'}"
+        in output
+    )
+    assert "simpletasks.Orch - INFO - Completed task NominalTask: True" in output
+
     assert "simpletasks.Orch - INFO - Starting task NominalTask2" in output
     assert (
         "simpletasks.Orch - DEBUG - Starting task NominalTask2 using arguments: {'show_progress': True, 'dryrun': True, 'verbose': True, 'fail_on_exception': False, 'loggernamespace': 'simpletasks.Orch.NominalTask2'}"
-        in output
-    )
-    assert "simpletasks.Orch - INFO - Starting task FailureTask" in output
-    assert (
-        "simpletasks.Orch - DEBUG - Starting task FailureTask using arguments: {'show_progress': False, 'dryrun': True, 'verbose': True, 'fail_on_exception': False, 'loggernamespace': 'simpletasks.Orch.FailureTask'}"
-        in output
-    )
-    assert "simpletasks.Orch - INFO - Starting task NominalTask3" in output
-    assert (
-        "simpletasks.Orch - DEBUG - Starting task NominalTask3 using arguments: {'show_progress': False, 'dryrun': True, 'verbose': True, 'fail_on_exception': False, 'loggernamespace': 'simpletasks.Foo'}"
-        in output
-    )
-    assert "simpletasks.Orch - INFO - Starting task NominalTask4" in output
-    assert (
-        "simpletasks.Orch - DEBUG - Starting task NominalTask4 using arguments: {'show_progress': False, 'dryrun': True, 'verbose': True, 'fail_on_exception': False, 'loggernamespace': 'simpletasks.Orch.NominalTask4'}"
-        in output
-    )
-
-    assert (
-        "simpletasks.Orch.NominalTask - INFO - Hello, from NominalTask, called with options={'show_progress': False, 'dryrun': True, 'verbose': True, 'fail_on_exception': False, 'loggernamespace': 'simpletasks.Orch.NominalTask'}"
         in output
     )
     assert (
         "simpletasks.Orch.NominalTask2 - INFO - Hello, from NominalTask2, called with options={'show_progress': True, 'dryrun': True, 'verbose': True, 'fail_on_exception': False, 'loggernamespace': 'simpletasks.Orch.NominalTask2'}"
         in output
     )
-    assert "simpletasks.Orch.NominalTask4 - INFO - Hello, from NominalTask4!" in output
-
     assert "simpletasks.Orch - INFO - Completed task NominalTask2: True" in output
-    assert "simpletasks.Orch - INFO - Completed task NominalTask: True" in output
+
+    assert "simpletasks.Orch - INFO - Starting task FailureTask" in output
+    assert (
+        "simpletasks.Orch - DEBUG - Starting task FailureTask using arguments: {'show_progress': False, 'dryrun': True, 'verbose': True, 'fail_on_exception': False, 'loggernamespace': 'simpletasks.Orch.FailureTask'}"
+        in output
+    )
+
+    assert "simpletasks.Orch - INFO - Starting task NominalTask3" in output
+    assert (
+        "simpletasks.Orch - DEBUG - Starting task NominalTask3 using arguments: {'show_progress': False, 'dryrun': True, 'verbose': True, 'fail_on_exception': False, 'loggernamespace': 'simpletasks.Foo'}"
+        in output
+    )
+    assert (
+        foo_logger.getvalue()
+        == """simpletasks.Foo - INFO - Hello, from NominalTask3, called with options={'show_progress': False, 'dryrun': True, 'verbose': True, 'fail_on_exception': False, 'loggernamespace': 'simpletasks.Foo'}
+"""
+    )
     assert "simpletasks.Orch - INFO - Completed task NominalTask3: True" in output
+
+    assert "simpletasks.Orch - INFO - Starting task NominalTask4" in output
+    assert (
+        "simpletasks.Orch - DEBUG - Starting task NominalTask4 using arguments: {'show_progress': False, 'dryrun': True, 'verbose': True, 'fail_on_exception': False, 'loggernamespace': 'simpletasks.Orch.NominalTask4'}"
+        in output
+    )
+    assert "simpletasks.Orch.NominalTask4 - INFO - Hello, from NominalTask4!" in output
     assert "simpletasks.Orch - INFO - Completed task NominalTask4: True" in output
 
     assert (
@@ -278,12 +220,6 @@ Traceback (most recent call last):
     )
     assert "simpletasks.Orch - CRITICAL - Could not run FailureTask: RuntimeError error" in output
 
-    assert (
-        foo_logger.getvalue()
-        == """simpletasks.Foo - INFO - Hello, from NominalTask3, called with options={'show_progress': False, 'dryrun': True, 'verbose': True, 'fail_on_exception': False, 'loggernamespace': 'simpletasks.Foo'}
-"""
-    )
-
 
 @pytest.mark.slow
 def test_orchestrator_deadlock(configure) -> None:
@@ -292,33 +228,19 @@ def test_orchestrator_deadlock(configure) -> None:
 
     o.run()
 
-    assert o._events == [
-        ("added", "NominalTask", ""),
-        ("added", "NominalTask2", ""),
-        (
-            "started",
-            "NominalTask",
-            "{'loggernamespace': 'simpletasks.OrchDeadlock.NominalTask'}",
-        ),
-        (
-            "started",
-            "NominalTask2",
-            "{'loggernamespace': 'simpletasks.OrchDeadlock.NominalTask2'}",
-        ),
-        ("completed", "NominalTask2", "True"),
-        ("completed", "NominalTask", "True"),
-        ("done", "", ""),
-    ]
-
     output = task_logger.getvalue()
     assert "simpletasks.OrchDeadlock - INFO - Starting task NominalTask" in output
     assert (
         "simpletasks.OrchDeadlock - DEBUG - Starting task NominalTask using arguments: {'loggernamespace': 'simpletasks.OrchDeadlock.NominalTask'}"
         in output
     )
+    assert "simpletasks.OrchDeadlock - INFO - Completed task NominalTask: True" in output
+
     assert "simpletasks.OrchDeadlock - INFO - Starting task NominalTask2" in output
     assert (
         "simpletasks.OrchDeadlock - DEBUG - Starting task NominalTask2 using arguments: {'loggernamespace': 'simpletasks.OrchDeadlock.NominalTask2'}"
         in output
     )
+    assert "simpletasks.OrchDeadlock - INFO - Completed task NominalTask2: True" in output
+
     assert "simpletasks.OrchDeadlock - CRITICAL - Done but some tasks remaining: NominalTask4" in output
