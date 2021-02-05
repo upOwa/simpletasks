@@ -4,7 +4,7 @@ target-version = ['py36']
 
 [tool.poetry]
 name = "simpletasks"
-version = "0.1.1"
+version = "0.1.2"
 description = "A simple library to run one task, or multiples ones in sequence or parallel"
 authors = ["Thomas Muguet <thomas.muguet@upowa.org>"]
 license = "LGPL-3.0-or-later"
