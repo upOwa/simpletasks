@@ -85,7 +85,9 @@ def test_date(configure) -> None:
     )
     class DateTask(Task):
         def do(self) -> None:
-            click.echo(self.date.strftime("%Y-%m-%d") if self.date else "None")
+            assert self.date is not None
+            assert type(self.date) == datetime.date
+            click.echo(self.date.strftime("%Y-%m-%d"))
 
     runner = CliRunner()
     result = runner.invoke(cli, ["date", "--date", "2020-01-01"])
@@ -94,7 +96,7 @@ def test_date(configure) -> None:
 
     result = runner.invoke(cli, ["date"])
     assert result.exit_code == 0
-    assert result.output == "{:%Y-%m-%d}\n".format(datetime.datetime.today())
+    assert result.output == "{:%Y-%m-%d}\n".format(datetime.date.today())
 
     result = runner.invoke(cli, ["date", "--date", "invalid-date"])
     assert result.exit_code == 2
