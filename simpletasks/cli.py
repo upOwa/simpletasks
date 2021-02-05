@@ -31,8 +31,8 @@ class CliParams:
             return None
 
         try:
-            date = datetime.datetime.strptime(value, "%Y-%m-%d")
-            return date
+            dt = datetime.datetime.strptime(value, "%Y-%m-%d")
+            return dt.date()
         except ValueError:
             raise click.BadParameter("timestamp must be in format YYYY-MM-DD")
 
